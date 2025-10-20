@@ -27,10 +27,14 @@ class Fetch extends StatelessWidget {
           return ListView.builder(
             itemCount: docs.length,
             itemBuilder: (context, index) {
-              final lat = docs[index]['latitude'];
-              final lng = docs[index]['longitude'];
-
-              final timestamp = docs[index]['timestamp'];
+              final data = docs[index].data();
+              final lat = data['latitude'];
+              final lng = data['longitude'];
+              final deviceName = data['device_name'] ?? "Unknown Device";
+              final androidVersion = data['android_version'] ?? "N/A";
+              final ipAddress = data['ip_address'] ?? "Unknown IP";
+              final macAddress = data['mac_address'] ?? "Unknown MAC";
+              final timestamp = data['timestamp'];
               DateTime dateTime;
 
               if (timestamp is Timestamp) {
@@ -40,31 +44,47 @@ class Fetch extends StatelessWidget {
               } else {
                 dateTime = DateTime.now();
               }
+
               final formattedTime =
                   "${dateTime.day}-${dateTime.month}-${dateTime.year} ${dateTime.hour}:${dateTime.minute}:${dateTime.second}";
 
-              return ListTile(
-                title: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Lat: $lat"),
-                    Text("Lng: $lng"),
-                    Text("Time: $formattedTime"),
-                  ],
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.person_pin_circle_outlined,
-                    color: Colors.red,size: 35,
+                child: ListTile(
+                  title: Text(
+                    "Device: $deviceName (Android $androidVersion)",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => MapScreen(latitude: lat, longitude: lng),
-                      ),
-                    );
-                  },
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Lng: $lng"),
+                      Text("Lat: $lat"),
+                      Text("IP: $ipAddress"),
+                      Text("MAC: $macAddress"),
+                      Text("Time: $formattedTime"),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.location_pin,
+                      color: Colors.red,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => MapScreen(latitude: lat, longitude: lng),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
             },
