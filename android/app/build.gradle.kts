@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.app"
+    namespace = "com.admin_pannel.app"
     compileSdk = 35
     ndkVersion = "27.0.12077973"
 
